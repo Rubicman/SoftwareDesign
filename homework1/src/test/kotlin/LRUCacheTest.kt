@@ -1,7 +1,6 @@
 import org.testng.Assert.*
 import org.testng.annotations.DataProvider
 import org.testng.annotations.Test
-import kotlin.test.assertContains
 
 private const val CAPACITY = 4
 
@@ -13,6 +12,7 @@ class LRUCacheTest {
         assertTrue(lruCache.containsKey(1))
         assertTrue(lruCache.containsValue(1))
         assertEquals(1, lruCache[1])
+        assertEquals(1, lruCache.size)
     }
 
     @Test(dataProvider = "lruCache")
@@ -25,12 +25,15 @@ class LRUCacheTest {
 
         for (key in goodKeys) {
             assertTrue(lruCache.containsKey(key))
+            assertTrue(lruCache.containsValue(key + 7))
             assertEquals(key + 7, lruCache[key])
         }
 
         for (key in badKeys) {
             assertFalse(lruCache.containsKey(key))
+            assertFalse(lruCache.containsValue(key + 7))
         }
+        assertEquals(4, lruCache.size)
     }
 
     @Test
@@ -41,13 +44,15 @@ class LRUCacheTest {
 
         assertEquals(1, lruCache[Key(1)])
         assertEquals(2, lruCache[Key(2)])
+        assertEquals(2, lruCache.size)
 
         lruCache[Key(1)] = 3
         lruCache[Key(4, 2)] = 4
 
         assertEquals(3, lruCache[Key(1)])
         assertEquals(2, lruCache[Key(2)])
-        assertEquals(4, lruCache[Key(4)])
+        assertEquals(4, lruCache[Key(4, 2)])
+        assertEquals(3, lruCache.size)
     }
 
     @Test(dataProvider = "lruCache")
@@ -63,22 +68,35 @@ class LRUCacheTest {
             assertTrue(lruCache.containsKey(key))
             assertEquals(key, lruCache[key])
         }
-        for (key in 1..10) {
+        for (key in 1..4) {
             lruCache[key] = key
         }
+        lruCache[2]
+        lruCache[3]
+        lruCache[5] = 5
+        lruCache[6] = 6
+        assertEquals(null, lruCache[1])
+        assertEquals(2, lruCache[2])
+        assertEquals(3, lruCache[3])
+        assertEquals(null, lruCache[4])
     }
 
     @Test(dataProvider = "lruCache", invocationCount = 10)
     fun evictionRandomTest(lruCache: LRUCache<Int, Int>) {
+        println("Eviction random test")
+        println("====================")
+        println("operation:")
         val keys = 1..10
-        val order = List(50) {keys.random()}
+        val order = List(50) { keys.random() }
         for (i in order.indices) {
             val key = order[i]
             val lastElements = getLastElements(order.subList(0, i))
             if (lruCache[key] == null) {
-                lruCache[key] = key
+                println("set $key")
                 assertFalse(lastElements.contains(key))
+                lruCache[key] = key
             } else {
+                println("get $key")
                 assertTrue(lastElements.contains(key))
             }
         }
@@ -91,11 +109,15 @@ class LRUCacheTest {
             assertFalse(lruCache.containsKey(key))
             assertEquals(null, lruCache[key])
         }
+        assertEquals(CAPACITY, lruCache.size)
+        println("====================")
+        println("Test done!")
+        println()
     }
 
     private fun getLastElements(order: List<Int>): Set<Int> {
         val lastElements = mutableSetOf<Int>()
-        for(key in order.reversed()) {
+        for (key in order.reversed()) {
             if (lastElements.size == CAPACITY) {
                 break
             }
@@ -112,9 +134,16 @@ class LRUCacheTest {
             return hash
         }
 
-        fun equals(other: Key) =
-            key == other.key && hash == other.hash
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
 
-        override fun equals(other: Any?) = false
+            other as Key
+
+            if (key != other.key) return false
+            if (hash != other.hash) return false
+
+            return true
+        }
     }
 }
