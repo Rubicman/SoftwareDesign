@@ -1,0 +1,1 @@
+Repository for Software Design homeworks. Author: Yaroslav Kubantsev
