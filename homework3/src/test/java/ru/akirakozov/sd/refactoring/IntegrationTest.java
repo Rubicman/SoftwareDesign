@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.akirakozov.sd.refactoring.domain.Product;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class IntegrationTest {
     @Test
     void addProductTest() {
         Product product = new Product("1", 1);
-        HttpResponse<String> actualAddResponse = sendRequest("/add-product?name=%s&price=%d".formatted(product.name, product.price));
+        HttpResponse<String> actualAddResponse = sendRequest("/add-product?name=%s&price=%d".formatted(product.getName(), product.getPrice()));
         assertEquals(HttpServletResponse.SC_OK, actualAddResponse.statusCode());
         assertEquals("OK" + System.lineSeparator(), actualAddResponse.body());
         HttpResponse<String> actualGetResponse = sendRequest("/get-products");
@@ -85,7 +86,7 @@ public class IntegrationTest {
                 new Product("3", 3)
         );
         products.forEach(product -> {
-            HttpResponse<String> actualResponse = sendRequest("/add-product?name=%s&price=%d".formatted(product.name, product.price));
+            HttpResponse<String> actualResponse = sendRequest("/add-product?name=%s&price=%d".formatted(product.getName(), product.getPrice()));
             assertEquals("OK" + System.lineSeparator(), actualResponse.body());
         });
 
@@ -105,7 +106,7 @@ public class IntegrationTest {
         );
 
         products.forEach(product -> {
-            HttpResponse<String> actualResponse = sendRequest("/add-product?name=%s&price=%d".formatted(product.name, product.price));
+            HttpResponse<String> actualResponse = sendRequest("/add-product?name=%s&price=%d".formatted(product.getName(), product.getPrice()));
             assertEquals("OK" + System.lineSeparator(), actualResponse.body());
         });
 
@@ -136,7 +137,7 @@ public class IntegrationTest {
         return "<html><body>" + System.lineSeparator() +
                 prefix +
                 products.stream()
-                        .map(product -> product.name + "\t" + product.price + "</br>" + System.lineSeparator())
+                        .map(product -> product.getName() + "\t" + product.getPrice() + "</br>" + System.lineSeparator())
                         .collect(Collectors.joining()) +
                 "</body></html>" + System.lineSeparator();
     }
@@ -154,13 +155,4 @@ public class IntegrationTest {
         throw new RuntimeException("Must not be here");
     }
 
-    private static class Product {
-        String name;
-        int price;
-
-        public Product(String name, int price) {
-            this.name = name;
-            this.price = price;
-        }
-    }
 }

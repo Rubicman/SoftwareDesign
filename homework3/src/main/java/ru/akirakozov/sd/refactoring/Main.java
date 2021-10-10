@@ -4,6 +4,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import ru.akirakozov.sd.refactoring.repository.ProductRepository;
+import ru.akirakozov.sd.refactoring.service.HtmlUtils;
 import ru.akirakozov.sd.refactoring.servlet.AddProductServlet;
 import ru.akirakozov.sd.refactoring.servlet.GetProductsServlet;
 import ru.akirakozov.sd.refactoring.servlet.QueryServlet;
@@ -37,10 +38,11 @@ public class Main {
         server.setHandler(context);
 
         ProductRepository productRepository = new ProductRepository(CONNECTION_URL);
+        HtmlUtils htmlUtils = new HtmlUtils();
 
         context.addServlet(new ServletHolder(new AddProductServlet(productRepository)), "/add-product");
-        context.addServlet(new ServletHolder(new GetProductsServlet(productRepository)),"/get-products");
-        context.addServlet(new ServletHolder(new QueryServlet(productRepository)),"/query");
+        context.addServlet(new ServletHolder(new GetProductsServlet(productRepository, htmlUtils)),"/get-products");
+        context.addServlet(new ServletHolder(new QueryServlet(productRepository, htmlUtils)),"/query");
 
         server.start();
         return server;

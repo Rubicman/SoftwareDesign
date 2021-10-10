@@ -1,32 +1,35 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
+import ru.akirakozov.sd.refactoring.domain.Product;
 import ru.akirakozov.sd.refactoring.repository.ProductRepository;
+import ru.akirakozov.sd.refactoring.service.HtmlUtils;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author akirakozov
  */
 public class GetProductsServlet extends HttpServlet {
     private final ProductRepository productRepository;
+    private final HtmlUtils htmlUtils;
 
-    public GetProductsServlet(ProductRepository productRepository) {
+    public GetProductsServlet(ProductRepository productRepository, HtmlUtils htmlUtils) {
         this.productRepository = productRepository;
+        this.htmlUtils = htmlUtils;
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         productRepository.executeSql("SELECT * FROM PRODUCT", resultSet -> {
-            response.getWriter().println("<html><body>");
-
+            List<Product> products = new ArrayList<>();
             while (resultSet.next()) {
-                String  name = resultSet.getString("name");
-                int price  = resultSet.getInt("price");
-                response.getWriter().println(name + "\t" + price + "</br>");
+                products.add(new Product(resultSet.getString("name"), resultSet.getInt("price")));
             }
-            response.getWriter().println("</body></html>");
+            htmlUtils.addHtml(response.getWriter(), products);
         });
 
         response.setContentType("text/html");
