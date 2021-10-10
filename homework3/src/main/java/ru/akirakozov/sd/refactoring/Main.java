@@ -40,7 +40,7 @@ public class Main {
         ProductRepository productRepository = new ProductRepository(CONNECTION_URL);
         HtmlUtils htmlUtils = new HtmlUtils();
 
-        context.addServlet(new ServletHolder(new AddProductServlet(productRepository)), "/add-product");
+        context.addServlet(new ServletHolder(new AddProductServlet(productRepository, htmlUtils)), "/add-product");
         context.addServlet(new ServletHolder(new GetProductsServlet(productRepository, htmlUtils)),"/get-products");
         context.addServlet(new ServletHolder(new QueryServlet(productRepository, htmlUtils)),"/query");
 

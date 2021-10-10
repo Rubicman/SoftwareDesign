@@ -1,8 +1,8 @@
 package ru.akirakozov.sd.refactoring.servlet;
 
 import ru.akirakozov.sd.refactoring.repository.ProductRepository;
+import ru.akirakozov.sd.refactoring.service.HtmlUtils;
 
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -10,11 +10,10 @@ import java.io.IOException;
 /**
  * @author akirakozov
  */
-public class AddProductServlet extends HttpServlet {
-    private final ProductRepository productRepository;
+public class AddProductServlet extends BaseServlet {
 
-    public AddProductServlet(ProductRepository productRepository) {
-        this.productRepository = productRepository;
+    public AddProductServlet(ProductRepository productRepository, HtmlUtils htmlUtils) {
+        super(productRepository, htmlUtils);
     }
 
     @Override
@@ -25,8 +24,7 @@ public class AddProductServlet extends HttpServlet {
         productRepository.executeSql("INSERT INTO PRODUCT " +
                 "(NAME, PRICE) VALUES (\"" + name + "\"," + price + ")");
 
-        response.setContentType("text/html");
-        response.setStatus(HttpServletResponse.SC_OK);
+        setHeaders(response);
         response.getWriter().println("OK");
     }
 }
