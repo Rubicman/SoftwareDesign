@@ -9,18 +9,18 @@ public class ProductRepository {
 
     public void executeSql(String sql, ResultSetHandler resultSetHandler) {
         try {
-            try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
-                Statement stmt = c.createStatement();
+            try (Connection connection = DriverManager.getConnection("jdbc:sqlite:test.db")) {
+                Statement statement = connection.createStatement();
                 if (resultSetHandler != null) {
-                    ResultSet rs = stmt.executeQuery(sql);
+                    ResultSet resultSet = statement.executeQuery(sql);
 
-                    resultSetHandler.handle(rs);
+                    resultSetHandler.handle(resultSet);
 
-                    rs.close();
+                    resultSet.close();
                 } else {
-                    stmt.executeUpdate(sql);
+                    statement.executeUpdate(sql);
                 }
-                stmt.close();
+                statement.close();
             }
 
         } catch (Exception e) {

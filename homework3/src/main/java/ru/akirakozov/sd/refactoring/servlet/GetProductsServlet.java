@@ -18,12 +18,12 @@ public class GetProductsServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        productRepository.executeSql("SELECT * FROM PRODUCT", rs -> {
+        productRepository.executeSql("SELECT * FROM PRODUCT", resultSet -> {
             response.getWriter().println("<html><body>");
 
-            while (rs.next()) {
-                String  name = rs.getString("name");
-                int price  = rs.getInt("price");
+            while (resultSet.next()) {
+                String  name = resultSet.getString("name");
+                int price  = resultSet.getInt("price");
                 response.getWriter().println(name + "\t" + price + "</br>");
             }
             response.getWriter().println("</body></html>");
