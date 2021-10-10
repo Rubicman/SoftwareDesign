@@ -6,10 +6,15 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class ProductRepository {
+    private final String connectionUrl;
+
+    public ProductRepository(String connectionUrl) {
+        this.connectionUrl = connectionUrl;
+    }
 
     public void executeSql(String sql, ResultSetHandler resultSetHandler) {
         try {
-            try (Connection connection = DriverManager.getConnection("jdbc:sqlite:test.db")) {
+            try (Connection connection = DriverManager.getConnection(connectionUrl)) {
                 Statement statement = connection.createStatement();
                 if (resultSetHandler != null) {
                     ResultSet resultSet = statement.executeQuery(sql);

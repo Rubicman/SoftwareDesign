@@ -16,8 +16,10 @@ import java.sql.Statement;
  * @author akirakozov
  */
 public class Main {
+    private static final String CONNECTION_URL = "jdbc:sqlite:test.db";
+
     public static Server startServer() throws Exception {
-        try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
+        try (Connection c = DriverManager.getConnection(CONNECTION_URL)) {
             String sql = "CREATE TABLE IF NOT EXISTS PRODUCT" +
                     "(ID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     " NAME           TEXT    NOT NULL, " +
@@ -34,7 +36,7 @@ public class Main {
         context.setContextPath("/");
         server.setHandler(context);
 
-        ProductRepository productRepository = new ProductRepository();
+        ProductRepository productRepository = new ProductRepository(CONNECTION_URL);
 
         context.addServlet(new ServletHolder(new AddProductServlet(productRepository)), "/add-product");
         context.addServlet(new ServletHolder(new GetProductsServlet(productRepository)),"/get-products");
