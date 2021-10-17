@@ -1,6 +1,4 @@
 .idea
 target
 *.iml
-/source
-.gitmodules
 *.db
