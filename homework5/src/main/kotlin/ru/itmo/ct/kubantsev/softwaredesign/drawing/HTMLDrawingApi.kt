@@ -36,7 +36,7 @@ class HTMLDrawingApi : DrawingApi {
                     top: ${(y1 + y2) / 2};
                     transform: rotate(${angle}rad)
                 }
-            """.trimIndent()
+            """
             )
         }
     }

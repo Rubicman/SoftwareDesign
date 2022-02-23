@@ -13,9 +13,7 @@ abstract class AbstractController<T> {
     }
 
     open fun delete(@PathVariable id: Long): T = withNotFound {
-        service.get(id)?.also {
-            service.delete(id)
-        }
+        service.delete(id)
     }
 
     protected fun withNotFound(body: () -> T?): T {
