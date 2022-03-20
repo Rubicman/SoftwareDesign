@@ -35,18 +35,10 @@ import kotlin.test.assertEquals
 
 @Testcontainers
 class IntegrationTest {
-
-    /*@Container
-    private val mongoContainer = FixedHostPortGenericContainer("mongo")
-        .withFixedExposedPort(30000, 27017)
-    private val mongoUrl by lazy { "mongodb://${mongoContainer.host}:30000" }*/
-
     @Container
     private val exchangeContainer = FixedHostPortGenericContainer("exchange")
         .withFixedExposedPort(8081, 8081)
 
-    //.withEnv("MONGO_URL", mongoUrl)
-    //.dependsOn(mongoContainer)
     private val exchangeUrl by lazy { "http://${exchangeContainer.host}:8081" }
 
     private val externalClient = HttpClient {

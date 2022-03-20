@@ -15,13 +15,7 @@ import repository.impl.InMemoryUserRepository
 import service.impl.PersonalAreaServiceImpl
 
 fun main() {
-    //val mongoUrl = System.getenv("MONGO_URL") ?: "mongodb://localhost"
     val exchangeUrl = System.getenv("EXCHANGE_URL") ?: "http://localhost:8081"
-
-    /*val client = MongoClients.create(mongoUrl)
-    val pojoCodecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(),
-        CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()))
-    val database = client.getDatabase("homework12").withCodecRegistry(pojoCodecRegistry)*/
 
     val httpClient = HttpClient(CIO) {
         expectSuccess = false
@@ -29,8 +23,6 @@ fun main() {
             serializer = JacksonSerializer()
         }
     }
-
-    //val userRepository = UserRepositoryImpl(database)
     val userRepository = InMemoryUserRepository()
     val exchangeClient = ExchangeClientImpl(exchangeUrl, httpClient)
     val personalAreaService = PersonalAreaServiceImpl(userRepository, exchangeClient)
